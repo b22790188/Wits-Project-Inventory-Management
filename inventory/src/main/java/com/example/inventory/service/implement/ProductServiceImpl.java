@@ -103,6 +103,14 @@ public class ProductServiceImpl implements ProductService {
         return convertToDto(updatedProduct);
     }
 
+    @Override
+    public void deleteProduct(Integer id){
+        if (!productRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Product with id " + id + " not found");
+        }
+        productRepository.deleteById(id);
+    }
+
     private Product convertToEntity(ProductDto productDto) {
         Product product = new Product();
         product.setProductId(productDto.getProductId());

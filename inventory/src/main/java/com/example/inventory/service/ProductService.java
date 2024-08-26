@@ -22,5 +22,5 @@ public interface ProductService {
 
     ProductDto updateProductPartially(Integer id, Map<String, Object> updates);
 
-    // void deleteProduct(Integer id);
+    void deleteProduct(Integer id);
 }

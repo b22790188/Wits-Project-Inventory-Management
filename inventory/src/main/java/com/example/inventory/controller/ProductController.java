@@ -86,4 +86,11 @@ public class ProductController {
         ApiResponse<ProductDto> response = new ApiResponse<>(updatedProduct);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @DeleteMapping
+    public ResponseEntity<ApiResponse<String>> deleteProduct(@RequestParam(required = true) @NotNull Integer id) {
+        productService.deleteProduct(id);
+        ApiResponse<String> response = new ApiResponse<>("Product deleted successfully");
+        return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+    }
 }
