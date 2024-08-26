@@ -12,7 +12,7 @@ public interface ProductService {
     
     void createProduct(ProductDto productDto);
 
-    // ProductDto getProductById(Integer id);
+    ProductDto getProductById(Integer id);
 
     // Page<ProductDto> getAllProducts(Pageable pageable);
 

@@ -59,6 +59,12 @@ public class ProductServiceImpl implements ProductService {
     }
     }
 
+    @Override
+    public ProductDto getProductById(Integer id) {
+        Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id));
+        return convertToDto(product);
+    }
+
     private Product convertToEntity(ProductDto productDto) {
         Product product = new Product();
         product.setProductId(productDto.getProductId());
@@ -101,4 +107,46 @@ public class ProductServiceImpl implements ProductService {
 
         return productDto;
     }
+
+    private Object convertValue(Field field, Object value) {
+        Class<?> fieldType = field.getType();
+    
+        if (fieldType.equals(BigDecimal.class)) {
+            return new BigDecimal(value.toString());
+        } else if (fieldType.equals(Integer.class) && value instanceof Number) {
+            return ((Number) value).intValue();
+        } else if (fieldType.equals(Double.class) && value instanceof Number) {
+            return ((Number) value).doubleValue();
+        } else if (fieldType.equals(Float.class) && value instanceof Number) {
+            return ((Number) value).floatValue();
+        } else if (fieldType.equals(Date.class) && value instanceof String) {
+            try {
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                return formatter.parse((String) value);
+            } catch (ParseException e) {
+                throw new BadRequestException("Invalid date format for field: " + field.getName());
+            }
+        }
+    
+        return value;
+    }
+
+    private String convertToCamelCase(String snakeCase) {
+        StringBuilder result = new StringBuilder();
+        boolean nextUpperCase = false;
+    
+        for (char c : snakeCase.toCharArray()) {
+            if (c == '_') {
+                nextUpperCase = true;
+            } else if (nextUpperCase) {
+                result.append(Character.toUpperCase(c));
+                nextUpperCase = false;
+            } else {
+                result.append(c);
+            }
+        }
+    
+        return result.toString();
+    }
+    
 }
