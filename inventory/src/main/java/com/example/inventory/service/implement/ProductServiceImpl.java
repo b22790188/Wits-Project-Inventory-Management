@@ -65,6 +65,16 @@ public class ProductServiceImpl implements ProductService {
         return convertToDto(product);
     }
 
+    @Override
+    public Page<ProductDto> getAllProducts(Pageable pageable) {
+        return productRepository.findAll(pageable).map(this::convertToDto);
+    }
+
+    @Override
+    public Page<ProductDto> getProductsByCategory(Category category, Pageable pageable) {
+        return productRepository.findByCategory(category, pageable).map(this::convertToDto);
+    }
+
     private Product convertToEntity(ProductDto productDto) {
         Product product = new Product();
         product.setProductId(productDto.getProductId());

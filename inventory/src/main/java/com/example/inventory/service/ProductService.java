@@ -14,9 +14,9 @@ public interface ProductService {
 
     ProductDto getProductById(Integer id);
 
-    // Page<ProductDto> getAllProducts(Pageable pageable);
+    Page<ProductDto> getAllProducts(Pageable pageable);
 
-    // Page<ProductDto> getProductsByCategory(Category category, Pageable pageable);
+    Page<ProductDto> getProductsByCategory(Category category, Pageable pageable);
 
     // Page<ProductDto> searchProductsByTitle(String keyword, Pageable pageable);
 

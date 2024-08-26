@@ -44,4 +44,28 @@ public class ProductController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("/{category}")
+    public ResponseEntity<ApiResponse<Page<ProductDto>>> getProducts(
+            @PathVariable String category,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductDto> products;
+
+        if ("all".equalsIgnoreCase(category)) {
+            products = productService.getAllProducts(pageable);
+        } else {
+            try {
+                Category categoryEnum = Category.valueOf(category.toUpperCase());
+                products = productService.getProductsByCategory(categoryEnum, pageable);
+            } catch (IllegalArgumentException e) {
+                throw new BadRequestException("Invalid category");
+            }
+        }
+
+        ApiResponse<Page<ProductDto>> response = new ApiResponse<>(products);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 }
