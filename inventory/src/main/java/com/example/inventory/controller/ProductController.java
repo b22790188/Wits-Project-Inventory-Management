@@ -68,4 +68,15 @@ public class ProductController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<Page<ProductDto>>> searchProducts(
+            @RequestParam("keyword") String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductDto> products = productService.searchProductsByTitle(keyword, pageable);
+        ApiResponse<Page<ProductDto>> response = new ApiResponse<>(products);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

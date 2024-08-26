@@ -18,7 +18,7 @@ public interface ProductService {
 
     Page<ProductDto> getProductsByCategory(Category category, Pageable pageable);
 
-    // Page<ProductDto> searchProductsByTitle(String keyword, Pageable pageable);
+    Page<ProductDto> searchProductsByTitle(String keyword, Pageable pageable);
 
     // ProductDto updateProductPartially(Integer id, Map<String, Object> updates);
 

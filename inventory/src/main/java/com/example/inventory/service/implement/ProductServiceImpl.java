@@ -75,6 +75,12 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findByCategory(category, pageable).map(this::convertToDto);
     }
 
+    @Override
+    public Page<ProductDto> searchProductsByTitle(String keyword, Pageable pageable) {
+        Page<Product> productsPage = productRepository.findByTitleContainingIgnoreCase(keyword, pageable);
+        return productsPage.map(this::convertToDto);
+    }
+
     private Product convertToEntity(ProductDto productDto) {
         Product product = new Product();
         product.setProductId(productDto.getProductId());
