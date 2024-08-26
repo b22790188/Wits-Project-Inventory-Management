@@ -20,7 +20,7 @@ public interface ProductService {
 
     Page<ProductDto> searchProductsByTitle(String keyword, Pageable pageable);
 
-    // ProductDto updateProductPartially(Integer id, Map<String, Object> updates);
+    ProductDto updateProductPartially(Integer id, Map<String, Object> updates);
 
     // void deleteProduct(Integer id);
 }

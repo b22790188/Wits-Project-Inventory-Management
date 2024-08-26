@@ -81,6 +81,28 @@ public class ProductServiceImpl implements ProductService {
         return productsPage.map(this::convertToDto);
     }
 
+    @Override
+    @Transactional
+    public ProductDto updateProductPartially(Integer id, Map<String, Object> updates) {
+        Product existingProduct = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(id));
+
+        updates.forEach((key, value) -> {
+            String camelCaseKey = convertToCamelCase(key);
+
+            Field field = ReflectionUtils.findField(Product.class, camelCaseKey);
+            if (field == null) {
+                throw new BadRequestException("Field '" + key + "' does not exist in Product class.");
+            }
+            field.setAccessible(true);
+            Object convertedValue = convertValue(field, value);
+            ReflectionUtils.setField(field, existingProduct, convertedValue);
+        });
+
+        Product updatedProduct = productRepository.save(existingProduct);
+        return convertToDto(updatedProduct);
+    }
+
     private Product convertToEntity(ProductDto productDto) {
         Product product = new Product();
         product.setProductId(productDto.getProductId());

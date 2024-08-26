@@ -79,4 +79,11 @@ public class ProductController {
         ApiResponse<Page<ProductDto>> response = new ApiResponse<>(products);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @PatchMapping(consumes = {"application/json"})
+    public ResponseEntity<ApiResponse<ProductDto>> updateProductPartially(@RequestParam(required = true) @NotNull Integer id, @RequestBody Map<String, Object> updates) {
+        ProductDto updatedProduct = productService.updateProductPartially(id, updates);
+        ApiResponse<ProductDto> response = new ApiResponse<>(updatedProduct);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }
