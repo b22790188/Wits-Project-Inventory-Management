@@ -2,12 +2,17 @@ package com.example.inventory.dto;
 
 import com.example.inventory.entity.Category;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProductDto {
 
     @JsonProperty("product_id")
