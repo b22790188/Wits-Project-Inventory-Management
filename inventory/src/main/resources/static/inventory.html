@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>庫存管理</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/modal.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/js/inventory.js" defer></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+</head>
+<body>
+    <div class="container">
+        <h2>庫存總覽</h2>
+        <div class="search-bar">
+            <input type="text" id="search_input" placeholder="輸入關鍵字..." onkeydown="handleKeyDown(event)">
+            <button onclick="searchProducts()">搜尋</button>
+            <button onclick="openProductModal('add')">新增商品</button>
+        </div>
+        
+        <table class="product-table">
+            <thead>
+                <tr>
+                    <th>ISBN</th>
+                    <th>書名</th>
+                    <th>作者</th>
+                    <th>出版社</th>
+                    <th>類別</th>
+                    <th>價格</th>
+                    <th>庫存</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="product_list">
+            </tbody>
+        </table>
+        
+        <div class="pagination">
+            <button id="prev_page" onclick="changePage('prev')" disabled>上一頁</button>
+            <button id="next_page" onclick="changePage('next')">下一頁</button>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="product_modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeProductModal()">&times;</span>
+            <h2 id="modal_title">產品管理</h2>
+            <form id="product_form" onsubmit="handleSubmit(event)" class="form-container">
+                <div class="form-column">
+                    <label for="title">書名:</label>
+                    <input type="text" id="title" name="title" required>
+
+                    <label for="isbn">ISBN:</label>
+                    <input type="text" id="isbn" name="isbn" required>
+                    
+                    <label for="author_search">作者:</label>
+                    <input type="text" id="author_search" name="author_name" placeholder="輸入作者關鍵字..." required>
+                    <input type="hidden" id="author_id" name="author_id">
+
+                    <button type="button" onclick="showAddAuthorModal()">新增作者</button>
+
+                    <label for="publisher_search">出版社:</label>
+                    <input type="text" id="publisher_search" name="publisher_name" placeholder="輸入出版社關鍵字..." required>
+                    <input type="hidden" id="publisher_id" name="publisher_id">
+                    <button type="button" onclick="showAddPublisherModal()">新增出版社</button>
+
+                </div>
+                <div class="form-column">
+                    <label for="published_date">出版日期:</label>
+                    <input type="date" id="published_date" name="published_date" required>
+                    
+                    <label for="price">價格:</label>
+                    <input type="number" id="price" name="price" required>
+                    
+                    <label for="category">類別:</label>
+                    <select id="category" name="category" required>
+                        <option value="LITERATURE_FICTION">文學小說</option>
+                        <option value="BUSINESS_INVESTING">商業投資</option>
+                        <option value="ART_DESIGN">藝術設計</option>
+                        <option value="HUMANITIES_SOCIAL_SCIENCES">人文社科</option>
+                        <option value="PSYCHOLOGY_MOTIVATION">心理勵志</option>
+                        <option value="NATURAL_SCIENCE">自然科學</option>
+                        <option value="CHILDREN_YOUNG_ADULT">兒童與青少年</option>
+                        <option value="COMPUTERS_TECHNOLOGY">電腦與科技</option>
+                        <option value="COMICS_GRAPHIC_NOVELS">漫畫與圖像小說</option>
+                        <option value="LIFESTYLE">生活風格</option>
+                        <option value="OTHER">其他</option>
+                    </select>
+                    
+                    <label for="description">描述:</label>
+                    <textarea id="description" name="description"></textarea>
+
+                    <input type="hidden" id="quantity" name="quantity">
+
+                </div>
+                <div class="form-footer">
+                    <button type="submit" id="modal_submit_button">提交</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Author Modal -->
+    <div id="addAuthorModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeAddAuthorModal()">&times;</span>
+            <h3>新增作者</h3>
+            <form onsubmit="addAuthor(event)" id="author_form" class="single-column-form">
+                <label for="authorName">作者姓名：</label>
+                <input type="text" id="authorName" required>
+
+                <label for="authorBio">作者簡介：</label>
+                <textarea id="authorBio" required></textarea>
+
+                <button type="submit">新增</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Publisher Modal -->
+    <div id="addPublisherModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeAddPublisherModal()">&times;</span>
+            <h3>新增出版商</h3>
+            <form onsubmit="addPublisher(event)" id="publisher_form" class="single-column-form">
+                <label for="publisherName">出版商名稱：</label>
+                <input type="text" id="publisherName" required>
+
+                <button type="submit">新增</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Inventory Modal -->
+    <div id="inventoryModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeInventoryModal()">&times;</span>
+            <h3 id="inventoryModalTitle">庫存操作</h3>
+            <form onsubmit="handleInventoryMovement(event)" id="inventory_form" class="single-column-form">
+                <input type="hidden" id="inventoryProductId">
+                <input type="hidden" id="movementType">
+                
+                <label for="movementQuantity">數量：</label>
+                <input type="number" id="movementQuantity" required>
+
+                <label for="movementRemarks">備註：</label>
+                <textarea id="movementRemarks"></textarea>
+
+                <label for="movementDate">日期：</label>
+                <input type="date" id="movementDate" required>
+
+                <button type="submit">提交</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
