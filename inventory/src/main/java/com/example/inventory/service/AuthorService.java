@@ -12,6 +12,8 @@ public interface AuthorService {
 
     List<AuthorDto> getAllAuthors();
 
+    List<AuthorDto> searchAuthors(String keyword);
+
     AuthorDto updateAuthor(Integer id, AuthorDto authorDto);
 
     void deleteAuthor(Integer id);

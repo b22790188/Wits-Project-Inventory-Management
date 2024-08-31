@@ -2,7 +2,7 @@ package com.example.inventory.service.implement;
 
 import com.example.inventory.dto.AuthorDto;
 import com.example.inventory.entity.Author;
-import com.example.inventory.exception.AuthorNotFoundException;
+import com.example.inventory.exception.notfound.AuthorNotFoundException;
 import com.example.inventory.repository.AuthorRepository;
 import com.example.inventory.service.AuthorService;
 import org.springframework.stereotype.Service;
@@ -51,6 +51,14 @@ public class AuthorServiceImpl implements AuthorService {
 
         Author updatedAuthor = authorRepository.save(author);
         return convertToDto(updatedAuthor);
+    }
+
+    @Override
+    public List<AuthorDto> searchAuthors(String keyword) {
+        List<Author> authors = authorRepository.findByAuthorNameContainingIgnoreCaseOrBioContainingIgnoreCase(keyword, keyword);
+        return authors.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
     @Override
