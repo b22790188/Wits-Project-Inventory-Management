@@ -1,4 +1,4 @@
-package com.example.inventory.dto;
+package com.example.inventory.dto.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
