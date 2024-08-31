@@ -5,6 +5,9 @@ import lombok.Data;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 @Entity
 @Table(name = "inventory_movement")
 @Data
@@ -24,9 +27,14 @@ public class InventoryMovement {
     @Column(nullable = false)
     private Integer quantity;
 
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private Timestamp movementDate;
-
     @Column(columnDefinition = "TEXT")
     private String remarks;
+    
+    private Timestamp movementDate;
+
+    @CreationTimestamp
+    private Timestamp createdAt;
+
+    @UpdateTimestamp
+    private Timestamp updatedAt;
 }
