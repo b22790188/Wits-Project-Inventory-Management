@@ -1,0 +1,264 @@
+.container {
+    width: 100%;
+    max-width: 1400px;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    text-align: center;
+    margin: 20px;
+}
+
+.search-bar {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+input[type="text"] {
+    padding: 10px;
+    width: 300px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+input[type="text"]:focus {
+    border-color: #086C93;
+    outline: none;
+}
+
+button {
+    padding: 10px 15px;
+    background-color: #086C93;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+button:hover {
+    background-color: #065a73;
+    transform: translateY(-2px);
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* product-table & inventory-table */
+
+.product-table, .inventory-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    border-radius: 8px;
+    overflow: hidden;
+    table-layout: fixed;
+    height: 610px;
+    display: block;
+}
+
+.product-table thead, .inventory-table thead {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.product-table tbody, .inventory-table tbody {
+    display: block;
+    overflow-y: auto;
+    height: calc(610px - 30px);
+    width: 100%;
+}
+
+.product-table th,
+.product-table td,
+.inventory-table th,
+.inventory-table td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+    white-space: nowrap;
+    text-overflow: ellipsis; 
+    overflow: hidden;
+    font-size: 16px;
+    height: 30px;
+}
+
+.product-table thead tr,
+.inventory-table thead tr  {
+    background-color: #086C93;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.product-table tbody tr,
+.inventory-table tbody tr {
+    transition: background-color 0.3s;
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+}
+
+.product-table th:nth-child(1),
+.product-table td:nth-child(1) {
+    width: 12%;
+}
+
+.product-table th:nth-child(2),
+.product-table td:nth-child(2) {
+    width: 20%; 
+}
+
+.product-table th:nth-child(3),
+.product-table td:nth-child(3) {
+    width: 18%;
+}
+
+.product-table th:nth-child(4),
+.product-table td:nth-child(4) {
+    width: 10%;
+}
+
+.product-table th:nth-child(5),
+.product-table td:nth-child(5) {
+    width: 10%;
+}
+
+.product-table th:nth-child(6),
+.product-table td:nth-child(6) {
+    width: 5%;
+}
+
+.product-table th:nth-child(7),
+.product-table td:nth-child(7) {
+    width: 5%;
+}
+
+.product-table th:nth-child(8),
+.product-table td:nth-child(8) {
+    width: 20%;
+}
+
+.product-table tbody tr:last-of-type,
+.inventory-table tbody tr:last-of-type {
+    border-bottom: 2px solid #086C93; 
+}
+
+td button {
+    padding: 5px 10px;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-right: 5px;
+    transition: background-color 0.3s;
+}
+
+.delete-button {
+    background-color: #C62828;
+}
+
+.delete-button:hover {
+    background-color: #af3030;
+}
+
+/* product-table */
+
+.product-table tbody tr {
+    cursor: pointer;
+}
+
+.product-table tbody tr:nth-of-type(even) {
+    background-color: #f1f5ec;
+}
+
+.product-table tbody tr:hover {
+    background-color: #d0dfbc;
+}
+
+/* inventory table */
+
+button.back-button {
+    margin-top: 10px;
+}
+
+.inventory-table tbody tr.in-row {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.inventory-table tbody tr.out-row {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.inventory-table th:nth-child(1),
+.inventory-table td:nth-child(1) {
+    width: 10%;
+}
+
+.inventory-table th:nth-child(2),
+.inventory-table td:nth-child(2) {
+    width: 10%;
+}
+
+.inventory-table th:nth-child(3),
+.inventory-table td:nth-child(3) {
+    width: 10%;
+}
+
+.inventory-table th:nth-child(4),
+.inventory-table td:nth-child(4) {
+    width: 50%;
+}
+
+.inventory-table th:nth-child(5),
+.inventory-table td:nth-child(5) {
+    width: 20%;
+}
+
+/* inventory-history */
+.current-stock-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.current-stock-action {
+    display: flex;
+    align-items: center;
+}
+
+.current-stock {
+    margin: 0;
+    font-size: 18px;
+}
+
+.action-buttons {
+    display: flex;
+    margin-left: 20px;
+}
+
+.current-stock-container .add-button, .current-stock-container .sell-button {
+    margin-left: 10px;
+}
