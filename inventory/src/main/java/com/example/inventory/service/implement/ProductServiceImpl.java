@@ -5,31 +5,25 @@ import com.example.inventory.entity.Product;
 import com.example.inventory.entity.Author;
 import com.example.inventory.entity.Category;
 import com.example.inventory.entity.Publisher;
-import com.example.inventory.exception.AuthorNotFoundException;
 import com.example.inventory.exception.BadRequestException;
-import com.example.inventory.exception.ProductNotFoundException;
-import com.example.inventory.exception.PublisherNotFoundException;
-import com.example.inventory.exception.ResourceNotFoundException;
+import com.example.inventory.exception.notfound.AuthorNotFoundException;
+import com.example.inventory.exception.notfound.ProductNotFoundException;
+import com.example.inventory.exception.notfound.PublisherNotFoundException;
 import com.example.inventory.repository.ProductRepository;
 import com.example.inventory.repository.AuthorRepository;
+import com.example.inventory.repository.InventoryMovementRepository;
 import com.example.inventory.repository.PublisherRepository;
 import com.example.inventory.service.ProductService;
 
 import jakarta.transaction.Transactional;
 
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
-
-import java.lang.reflect.Field;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionSystemException;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -37,13 +31,17 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final AuthorRepository authorRepository;
     private final PublisherRepository publisherRepository;
+        private final InventoryMovementRepository inventoryMovementRepository;
+
 
     public ProductServiceImpl(ProductRepository productRepository,
                               AuthorRepository authorRepository,
-                              PublisherRepository publisherRepository) {
+                              PublisherRepository publisherRepository,
+                              InventoryMovementRepository inventoryMovementRepository) {
         this.productRepository = productRepository;
         this.authorRepository = authorRepository;
         this.publisherRepository = publisherRepository;
+        this.inventoryMovementRepository = inventoryMovementRepository;
     }
 
     @Override
@@ -67,7 +65,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<ProductDto> getAllProducts(Pageable pageable) {
-        return productRepository.findAll(pageable).map(this::convertToDto);
+        Pageable sortedByUpdatedAtDesc = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "updatedAt"));
+        return productRepository.findAll(sortedByUpdatedAtDesc).map(this::convertToDto);   
     }
 
     @Override
@@ -77,37 +76,51 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<ProductDto> searchProductsByTitle(String keyword, Pageable pageable) {
-        Page<Product> productsPage = productRepository.findByTitleContainingIgnoreCase(keyword, pageable);
+        Pageable sortedByUpdatedAtDesc = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "updatedAt"));
+        Page<Product> productsPage = productRepository.findByTitleContainingIgnoreCase(keyword, sortedByUpdatedAtDesc);
         return productsPage.map(this::convertToDto);
     }
 
     @Override
     @Transactional
-    public ProductDto updateProductPartially(Integer id, Map<String, Object> updates) {
+    public ProductDto updateProduct(Integer id, ProductDto productDto) {
         Product existingProduct = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
-
-        updates.forEach((key, value) -> {
-            String camelCaseKey = convertToCamelCase(key);
-
-            Field field = ReflectionUtils.findField(Product.class, camelCaseKey);
-            if (field == null) {
-                throw new BadRequestException("Field '" + key + "' does not exist in Product class.");
-            }
-            field.setAccessible(true);
-            Object convertedValue = convertValue(field, value);
-            ReflectionUtils.setField(field, existingProduct, convertedValue);
-        });
-
+    
+        existingProduct.setTitle(productDto.getTitle());
+        existingProduct.setIsbn(productDto.getIsbn());
+        existingProduct.setPublishedDate(productDto.getPublishedDate());
+        existingProduct.setPrice(productDto.getPrice());
+        existingProduct.setQuantity(productDto.getQuantity());
+        existingProduct.setCategory(productDto.getCategory());
+        existingProduct.setDescription(productDto.getDescription());
+    
+        Integer authorId = productDto.getAuthorId();
+        if (authorId != null) {
+            Author author = authorRepository.findById(authorId)
+                    .orElseThrow(() -> new AuthorNotFoundException(authorId));
+            existingProduct.setAuthor(author);
+        }
+    
+        Integer publisherId = productDto.getPublisherId();
+        if (publisherId != null) {
+            Publisher publisher = publisherRepository.findById(publisherId)
+                    .orElseThrow(() -> new PublisherNotFoundException(publisherId));
+            existingProduct.setPublisher(publisher);
+        }
+    
         Product updatedProduct = productRepository.save(existingProduct);
         return convertToDto(updatedProduct);
-    }
+    }      
+    
 
     @Override
+    @Transactional
     public void deleteProduct(Integer id){
         if (!productRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Product with id " + id + " not found");
+            throw new ProductNotFoundException(id);
         }
+        inventoryMovementRepository.deleteByProduct_ProductId(id);
         productRepository.deleteById(id);
     }
 
@@ -149,50 +162,11 @@ public class ProductServiceImpl implements ProductService {
         productDto.setCategory(product.getCategory());
         
         productDto.setAuthorId(product.getAuthor().getAuthorId());
+        productDto.setAuthorName(product.getAuthor().getAuthorName());
+        productDto.setBio(product.getAuthor().getBio());
+    
         productDto.setPublisherId(product.getPublisher().getPublisherId());
-
+        productDto.setPublisherName(product.getPublisher().getPublisherName());
         return productDto;
     }
-
-    private Object convertValue(Field field, Object value) {
-        Class<?> fieldType = field.getType();
-    
-        if (fieldType.equals(BigDecimal.class)) {
-            return new BigDecimal(value.toString());
-        } else if (fieldType.equals(Integer.class) && value instanceof Number) {
-            return ((Number) value).intValue();
-        } else if (fieldType.equals(Double.class) && value instanceof Number) {
-            return ((Number) value).doubleValue();
-        } else if (fieldType.equals(Float.class) && value instanceof Number) {
-            return ((Number) value).floatValue();
-        } else if (fieldType.equals(Date.class) && value instanceof String) {
-            try {
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                return formatter.parse((String) value);
-            } catch (ParseException e) {
-                throw new BadRequestException("Invalid date format for field: " + field.getName());
-            }
-        }
-    
-        return value;
-    }
-
-    private String convertToCamelCase(String snakeCase) {
-        StringBuilder result = new StringBuilder();
-        boolean nextUpperCase = false;
-    
-        for (char c : snakeCase.toCharArray()) {
-            if (c == '_') {
-                nextUpperCase = true;
-            } else if (nextUpperCase) {
-                result.append(Character.toUpperCase(c));
-                nextUpperCase = false;
-            } else {
-                result.append(c);
-            }
-        }
-    
-        return result.toString();
-    }
-    
 }

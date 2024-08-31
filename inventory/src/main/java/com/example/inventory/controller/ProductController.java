@@ -1,6 +1,7 @@
 package com.example.inventory.controller;
 
 import com.example.inventory.dto.ProductDto;
+import com.example.inventory.dto.general.ApiResponse;
 import com.example.inventory.entity.Category;
 import com.example.inventory.exception.BadRequestException;
 import com.example.inventory.service.ProductService;
@@ -8,9 +9,6 @@ import com.example.inventory.service.ProductService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
-import com.example.inventory.dto.ApiResponse;
-
-import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
@@ -80,12 +78,16 @@ public class ProductController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PatchMapping(consumes = {"application/json"})
-    public ResponseEntity<ApiResponse<ProductDto>> updateProductPartially(@RequestParam(required = true) @NotNull Integer id, @RequestBody Map<String, Object> updates) {
-        ProductDto updatedProduct = productService.updateProductPartially(id, updates);
+    @PutMapping
+    public ResponseEntity<ApiResponse<ProductDto>> updateProduct(
+            @RequestParam @NotNull Integer id,
+            @RequestBody @Valid ProductDto productDto) {
+    
+        ProductDto updatedProduct = productService.updateProduct(id, productDto);
         ApiResponse<ProductDto> response = new ApiResponse<>(updatedProduct);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.ok(response);
     }
+    
 
     @DeleteMapping
     public ResponseEntity<ApiResponse<String>> deleteProduct(@RequestParam(required = true) @NotNull Integer id) {
