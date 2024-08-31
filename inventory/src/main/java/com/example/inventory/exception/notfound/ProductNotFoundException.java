@@ -1,4 +1,4 @@
-package com.example.inventory.exception;
+package com.example.inventory.exception.notfound;
 
 public class ProductNotFoundException extends RuntimeException {
     public ProductNotFoundException(Integer productId) {

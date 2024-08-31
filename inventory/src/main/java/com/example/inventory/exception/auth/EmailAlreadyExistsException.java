@@ -1,4 +1,4 @@
-package com.example.inventory.exception;
+package com.example.inventory.exception.auth;
 
 public class EmailAlreadyExistsException extends RuntimeException {
     public EmailAlreadyExistsException(String message) {
