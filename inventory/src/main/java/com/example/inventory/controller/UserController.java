@@ -2,10 +2,10 @@ package com.example.inventory.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.example.inventory.dto.ApiResponse;
-import com.example.inventory.dto.AuthResponseDto;
-import com.example.inventory.dto.SigninRequestDto;
-import com.example.inventory.dto.SignupRequestDto;
+import com.example.inventory.dto.auth.AuthResponseDto;
+import com.example.inventory.dto.auth.SigninRequestDto;
+import com.example.inventory.dto.auth.SignupRequestDto;
+import com.example.inventory.dto.general.ApiResponse;
 import com.example.inventory.service.UserService;
 
 import org.springframework.http.ResponseEntity;

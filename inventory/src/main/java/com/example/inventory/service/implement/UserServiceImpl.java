@@ -7,13 +7,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.inventory.dto.AuthResponseDto;
-import com.example.inventory.dto.SigninRequestDto;
-import com.example.inventory.dto.SignupRequestDto;
 import com.example.inventory.dto.UserDto;
+import com.example.inventory.dto.auth.AuthResponseDto;
+import com.example.inventory.dto.auth.SigninRequestDto;
+import com.example.inventory.dto.auth.SignupRequestDto;
 import com.example.inventory.entity.User;
-import com.example.inventory.exception.EmailAlreadyExistsException;
-import com.example.inventory.exception.SigninFailException;
+import com.example.inventory.exception.auth.EmailAlreadyExistsException;
+import com.example.inventory.exception.auth.SigninFailException;
 import com.example.inventory.repository.UserRepository;
 import com.example.inventory.security.JwtUtil;
 import com.example.inventory.service.UserService;
@@ -77,4 +77,4 @@ public class UserServiceImpl implements UserService{
 
         return new AuthResponseDto(token, expiration, userDto);
     }
-}
+} 
