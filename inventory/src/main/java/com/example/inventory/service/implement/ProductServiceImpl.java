@@ -51,7 +51,13 @@ public class ProductServiceImpl implements ProductService {
     try {
         productRepository.save(product);
     } catch (DataIntegrityViolationException e) {
-        throw new BadRequestException("Data integrity violation: " + e.getMessage());
+        String errorMessage = e.getMessage();
+        if (errorMessage != null && errorMessage.contains("Duplicate entry")) {
+            if (errorMessage.contains("for key 'book.isbn'")) {
+                throw new BadRequestException("ISBN already exists");
+            }
+        }
+        throw new BadRequestException("Data integrity violation: " + errorMessage);
     } catch (TransactionSystemException e) {
         throw new BadRequestException("Transaction system error: " + e.getMessage());
     }

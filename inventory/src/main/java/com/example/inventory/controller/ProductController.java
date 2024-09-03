@@ -82,10 +82,20 @@ public class ProductController {
     public ResponseEntity<ApiResponse<ProductDto>> updateProduct(
             @RequestParam @NotNull Integer id,
             @RequestBody @Valid ProductDto productDto) {
-    
-        ProductDto updatedProduct = productService.updateProduct(id, productDto);
-        ApiResponse<ProductDto> response = new ApiResponse<>(updatedProduct);
-        return ResponseEntity.ok(response);
+        
+        try{
+            ProductDto updatedProduct = productService.updateProduct(id, productDto);
+            ApiResponse<ProductDto> response = new ApiResponse<>(updatedProduct);
+            return ResponseEntity.ok(response);
+        }catch (Exception e) {
+            String errorMessage = e.getMessage();
+            if (errorMessage != null && errorMessage.contains("Duplicate entry")) {
+                if (errorMessage.contains("for key 'book.isbn'")) {
+                    throw new BadRequestException("ISBN already exists");
+                }
+            }
+            throw new BadRequestException(errorMessage);
+        }
     }
     
 
