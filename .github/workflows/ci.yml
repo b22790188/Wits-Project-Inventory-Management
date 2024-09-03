@@ -29,7 +29,9 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
       
     - name: Build Docker image
-      run: docker build -t kesleylin2000/wits_inventory_management:latest -f ./inventory/Dockerfile .
+      run: |
+        cd inventory
+        docker build -t kesleylin2000/wits_inventory_management:latest -f Dockerfile .
 
     - name: Push Docker image
       run: docker push kesleylin2000/wits_inventory_management:latest
