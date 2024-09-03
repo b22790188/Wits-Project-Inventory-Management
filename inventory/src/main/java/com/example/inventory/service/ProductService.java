@@ -3,8 +3,6 @@ package com.example.inventory.service;
 import com.example.inventory.dto.ProductDto;
 import com.example.inventory.entity.Category;
 
-import java.util.Map;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -20,7 +18,7 @@ public interface ProductService {
 
     Page<ProductDto> searchProductsByTitle(String keyword, Pageable pageable);
 
-    ProductDto updateProductPartially(Integer id, Map<String, Object> updates);
+    ProductDto updateProduct(Integer id, ProductDto productDto);
 
     void deleteProduct(Integer id);
 }

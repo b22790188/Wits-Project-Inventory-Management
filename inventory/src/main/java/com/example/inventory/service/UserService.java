@@ -1,8 +1,8 @@
 package com.example.inventory.service;
 
-import com.example.inventory.dto.AuthResponseDto;
-import com.example.inventory.dto.SigninRequestDto;
-import com.example.inventory.dto.SignupRequestDto;
+import com.example.inventory.dto.auth.AuthResponseDto;
+import com.example.inventory.dto.auth.SigninRequestDto;
+import com.example.inventory.dto.auth.SignupRequestDto;
 
 public interface UserService {
     

@@ -1,5 +1,6 @@
-package com.example.inventory.dto;
+package com.example.inventory.dto.auth;
 
+import com.example.inventory.dto.UserDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
