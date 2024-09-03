@@ -1,9 +1,20 @@
-FROM openjdk:17-jdk-alpine
+FROM maven:3.8.5 AS builder
 
 WORKDIR /app
 
-COPY target/inventory-0.0.1-SNAPSHOT.jar app.jar
+COPY pom.xml .
+
+COPY src ./src
+
+RUN mvn clean package -DskipTests
+
+
+FROM eclipse-temurin:17.0.12_7-jre-jammy
+
+WORKDIR /app
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+COPY --from=builder /app/target/Wits-Project-Inventory-0.0.1-SNAPSHOT.jar .
+
+CMD ["java", "-jar", "Wits-Project-Inventory-0.0.1-SNAPSHOT.jar"]
