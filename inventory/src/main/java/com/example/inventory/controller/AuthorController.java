@@ -4,16 +4,19 @@ import com.example.inventory.dto.AuthorDto;
 import com.example.inventory.dto.general.ApiResponse;
 import com.example.inventory.service.AuthorService;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/1.0/author")
+@Validated
 public class AuthorController {
 
     private final AuthorService authorService;
@@ -23,7 +26,7 @@ public class AuthorController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<AuthorDto>> createAuthor(@RequestBody AuthorDto authorDto) {
+    public ResponseEntity<ApiResponse<AuthorDto>> createAuthor(@Valid @RequestBody AuthorDto authorDto) {
         AuthorDto createdAuthor = authorService.createAuthor(authorDto);
         ApiResponse<AuthorDto> response = new ApiResponse<>(createdAuthor);
         return new ResponseEntity<>(response, HttpStatus.CREATED);

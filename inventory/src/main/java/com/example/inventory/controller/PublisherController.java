@@ -4,16 +4,19 @@ import com.example.inventory.dto.PublisherDto;
 import com.example.inventory.dto.general.ApiResponse;
 import com.example.inventory.service.PublisherService;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/1.0/publisher")
+@Validated
 public class PublisherController {
 
     private final PublisherService publisherService;
@@ -23,7 +26,7 @@ public class PublisherController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<PublisherDto>> createPublisher(@RequestBody PublisherDto publisherDto) {
+    public ResponseEntity<ApiResponse<PublisherDto>> createPublisher(@Valid @RequestBody PublisherDto publisherDto) {
         PublisherDto createdPublisher = publisherService.createPublisher(publisherDto);
         ApiResponse<PublisherDto> response = new ApiResponse<>(createdPublisher);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
