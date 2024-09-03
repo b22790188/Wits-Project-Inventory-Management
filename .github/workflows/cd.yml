@@ -14,16 +14,20 @@ jobs:
     strategy:
       matrix:
         ec2_instance: 
-          - { host: ${{ secrets.EC2_HOST_1 }}, user: ${{ secrets.EC2_USER }}, key: ${{ secrets.EC2_KEY }} }
-          - { host: ${{ secrets.EC2_HOST_2 }}, user: ${{ secrets.EC2_USER }}, key: ${{ secrets.EC2_KEY }} }
+          - host: "EC2_HOST_1"
+            user: "EC2_USER"
+            key: "EC2_KEY"
+          - host: "EC2_HOST_2"
+            user: "EC2_USER"
+            key: "EC2_KEY"
 
     steps:
     - name: SSH and deploy to EC2
       uses: appleboy/ssh-action@master
       with:
-        host: ${{ matrix.ec2_instance.host }}
-        username: ${{ matrix.ec2_instance.user }}
-        key: ${{ matrix.ec2_instance.key }}
+        host: ${{ secrets[matrix.ec2_instance.host] }}
+        username: ${{ secrets[matrix.ec2_instance.user] }}
+        key: ${{ secrets[matrix.ec2_instance.key] }}
         script: |
           docker pull kesleylin2000/wits_inventory_management:latest
           docker stop wits_inventory_management_1 || true
