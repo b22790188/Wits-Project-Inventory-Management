@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>庫存歷史紀錄</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/modal.css">
+    <script src="/js/inventoryHistory.js" defer></script>
+
+</head>
+<body>
+    <div class="container">
+        <h2 id="productTitle">庫存歷史紀錄</h2>
+        <div class="current-stock-container">
+            <button class="back-button" onclick="window.history.back()">返回庫存總覽</button>
+            <div class="current-stock-action">
+                <p id="currentStock" class="current-stock">目前庫存: </p>
+                <div class="action-buttons">
+                    <button class="add-button" onclick="openInventoryModal(getCurrentProductId(), 'IN')">進貨</button>
+                    <button class="sell-button" onclick="openInventoryModal(getCurrentProductId(), 'OUT')">銷貨</button>
+                </div>
+            </div>
+        </div>        
+        <table class="inventory-table">
+            <thead>
+                <tr>
+                    <th>進銷貨類別</th>
+                    <th>日期</th>
+                    <th>數量</th>
+                    <th>備註</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="inventoryHistoryList">
+            </tbody>
+        </table>
+        <div class="pagination">
+            <button id="prevPage" onclick="changePage('prev')" disabled>上一頁</button>
+            <button id="nextPage" onclick="changePage('next')">下一頁</button>
+        </div>
+
+        <!-- Inventory Modal -->
+        <div id="editInventoryModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close" onclick="closeEditInventoryModal()">&times;</span>
+                <h3>編輯庫存操作</h3>
+                <form onsubmit="editInventory(event)" class="single-column-form">
+                    <input type="hidden" id="editInventoryId">
+                    
+                    <label for="editMovementType">操作類型：</label>
+                    <select id="editMovementType" required>
+                        <option value="IN">進貨</option>
+                        <option value="OUT">銷貨</option>
+                    </select><br>
+
+                    <label for="editQuantity">數量：</label>
+                    <input type="number" id="editQuantity" required><br>
+
+                    <label for="editRemarks">備註：</label>
+                    <input type="text" id="editRemarks">
+
+                    <label for="editDate">日期：</label>
+                    <input type="date" id="editDate" required><br>
+
+                    <button type="submit">保存變更</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Inventory Modal -->
+        <div id="inventoryModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close" onclick="closeInventoryModal()">&times;</span>
+                <h3 id="inventoryModalTitle">庫存操作</h3>
+                <form onsubmit="handleInventoryMovement(event)" id="inventory_form" class="single-column-form">
+                    <input type="hidden" id="inventoryProductId">
+                    <input type="hidden" id="movementType">
+                    
+                    <label for="movementQuantity">數量：</label>
+                    <input type="number" id="movementQuantity" required>
+
+                    <label for="movementRemarks">備註：</label>
+                    <input type="text" id="movementRemarks">
+
+                    <label for="movementDate">日期：</label>
+                    <input type="date" id="movementDate" required>
+
+                    <button type="submit">提交</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
