@@ -28,4 +28,4 @@ jobs:
           docker pull kesleylin2000/wits_inventory_management:latest
           docker stop wits_inventory_management_1 || true
           docker rm wits_inventory_management_1 || true
-          docker run -d -p 8080:8080 --name wits_inventory_management_1 kesleylin2000/wits_inventory_management:latest
+          docker run -d -p 8080:8080 --name wits_inventory_management_1 --restart unless-stopped kesleylin2000/wits_inventory_management:latest
