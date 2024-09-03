@@ -36,6 +36,11 @@ async function apiRequest(url, method, data = null) {
 
     await handleAuthError(response);
 
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || '發生錯誤');
+    }
+
     if (method === 'DELETE') {
         return;
     }
@@ -50,6 +55,11 @@ async function handleAuthError(response) {
         throw new Error('Unauthorized');
     }
     return response;
+}
+
+function clearSearchProducts(){
+    document.getElementById('search_input').value = "";
+    loadProducts();
 }
 
 async function loadProducts(keyword = '') {
@@ -68,33 +78,43 @@ function displayProducts(products) {
     const productList = document.getElementById('product_list');
     productList.innerHTML = '';
 
-    products.forEach(product => {
-        const categoryName = categoryMapping[product.category] || '其他';
-        const row = document.createElement('tr');
+    if(products.length == 0){
+        const noResultsRow = document.createElement('tr');
+        const noResultsCell = document.createElement('td');
+        noResultsCell.colSpan = 8;
+        noResultsCell.textContent = '無符合的產品';
+        noResultsCell.style.textAlign = 'center';
+        noResultsRow.appendChild(noResultsCell);
+        productList.appendChild(noResultsRow);
+    }else{
+        products.forEach(product => {
+            const categoryName = categoryMapping[product.category] || '其他';
+            const row = document.createElement('tr');
 
-        row.addEventListener('click', function(event) {
-            if (!event.target.closest('button')) {
-                window.location.href = `/inventoryHistory.html?productId=${product.product_id}`;
-            }
+            row.addEventListener('click', function(event) {
+                if (!event.target.closest('button')) {
+                    window.location.href = `/inventoryHistory.html?productId=${product.product_id}`;
+                }
+            });
+
+            row.innerHTML = `
+                <td>${product.isbn}</td>
+                <td>${product.title}</td>
+                <td>${product.author_name}</td>
+                <td>${product.publisher_name}</td>
+                <td>${categoryName}</td>
+                <td>$ ${product.price}</td>
+                <td>${product.quantity}</td>
+                <td>
+                    <button class="add-button" onclick="openInventoryModal(${product.product_id}, 'IN', '${product.title}')">進貨</button>
+                    <button class="sell-button" onclick="openInventoryModal(${product.product_id}, 'OUT', '${product.title}')">銷貨</button>
+                    <button class="edit-button" onclick="openProductModal('edit', ${product.product_id})">編輯</button>
+                    <button class="delete-button" onclick="confirmDelete(${product.product_id}, '${product.title}')">刪除</button>
+                </td>
+            `;
+            productList.appendChild(row);
         });
-
-        row.innerHTML = `
-            <td>${product.isbn}</td>
-            <td>${product.title}</td>
-            <td>${product.author_name}</td>
-            <td>${product.publisher_name}</td>
-            <td>${categoryName}</td>
-            <td>$ ${product.price}</td>
-            <td>${product.quantity}</td>
-            <td>
-                <button class="add-button" onclick="openInventoryModal(${product.product_id}, 'IN', '${product.title}')">進貨</button>
-                <button class="sell-button" onclick="openInventoryModal(${product.product_id}, 'OUT', '${product.title}')">銷貨</button>
-                <button class="edit-button" onclick="openProductModal('edit', ${product.product_id})">編輯</button>
-                <button class="delete-button" onclick="confirmDelete(${product.product_id}, '${product.title}')">刪除</button>
-            </td>
-        `;
-        productList.appendChild(row);
-    });
+    }
 }
 
 function searchProducts() {
@@ -202,7 +222,8 @@ async function addProduct() {
         loadProducts();
     } catch (error) {
         console.error('錯誤:', error);
-        alert('新增產品時出現錯誤。');
+        alert("新增產品失敗 " + error.message);
+
     }
 }
 
@@ -215,7 +236,7 @@ async function updateProduct() {
         loadProducts();
     } catch (error) {
         console.error('錯誤:', error);
-        alert('更新產品時出現錯誤。');
+        alert("更新產品失敗 " + error.message);
     }
 }
 
@@ -339,7 +360,7 @@ async function addAuthor(event) {
         $("#author_search").autocomplete("search", authorData.author_name);
     } catch (error) {
         console.error('錯誤:', error);
-        alert('無法新增作者，請稍後重試。');
+        alert('無法新增作者 ' + error.message);
     }
 }
 
@@ -366,7 +387,7 @@ async function addPublisher(event) {
         $("#publisher_search").autocomplete("search", publisherData.publisher_name);
     } catch (error) {
         console.error('錯誤:', error);
-        alert('無法新增出版商，請稍後重試。');
+        alert('無法新增出版商 ' + error.message);
     }
 }
 

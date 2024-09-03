@@ -19,7 +19,8 @@
         <div class="search-bar">
             <input type="text" id="search_input" placeholder="輸入關鍵字..." onkeydown="handleKeyDown(event)">
             <button onclick="searchProducts()">搜尋</button>
-            <button onclick="openProductModal('add')">新增商品</button>
+            <button onclick="clearSearchProducts()">清除搜尋</button>
+            <button onclick="openProductModal('add')">新增產品</button>
         </div>
         
         <table class="product-table">
@@ -149,7 +150,7 @@
                 <input type="number" id="movementQuantity" required>
 
                 <label for="movementRemarks">備註：</label>
-                <textarea id="movementRemarks"></textarea>
+                <input type="text" id="movementRemarks">
 
                 <label for="movementDate">日期：</label>
                 <input type="date" id="movementDate" required>
