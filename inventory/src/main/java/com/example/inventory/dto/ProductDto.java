@@ -32,7 +32,6 @@ public class ProductDto {
     private Integer publisherId;
 
     @JsonProperty("published_date")
-    @PastOrPresent(message = "Published date must be in the past or present")
     private Date publishedDate;
 
     @JsonProperty("isbn")
