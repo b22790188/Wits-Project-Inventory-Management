@@ -14,8 +14,8 @@ jobs:
     strategy:
       matrix:
         ec2_instance: 
-          - { host: ${{ secrets.EC2_HOST_1 }}, user: ${{ secrets.EC2_USER_1 }}, key: ${{ secrets.EC2_KEY_1 }} }
-          - { host: ${{ secrets.EC2_HOST_2 }}, user: ${{ secrets.EC2_USER_2 }}, key: ${{ secrets.EC2_KEY_2 }} }
+          - { host: ${{ secrets.EC2_HOST_1 }}, user: ${{ secrets.EC2_USER }}, key: ${{ secrets.EC2_KEY }} }
+          - { host: ${{ secrets.EC2_HOST_2 }}, user: ${{ secrets.EC2_USER }}, key: ${{ secrets.EC2_KEY }} }
 
     steps:
     - name: SSH and deploy to EC2
